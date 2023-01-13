@@ -25,7 +25,20 @@ function StartBtn({ btnState, btnText, btnStateModify,  btnTextModify}) {
 
     return (
         <>
-            <button onClick={onClick}>{btnText}</button>
+            <button type="button" 
+                    onClick={onClick}
+                    class="py-4 px-20 
+                            block
+                            mx-auto
+                            my-2
+                         bg-gray-600
+                         hover:bg-gray-700 
+                         focus:ring-gray-500 
+                         focus:ring-offset-gray-200 
+                         text-white 
+                           rounded-lg">
+            {btnText}</button>
+
         </>
     )
 }

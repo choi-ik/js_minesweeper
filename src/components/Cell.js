@@ -68,7 +68,8 @@ const Cell = ({ row, col, value, getCol, getRow, getMineValue, getBoard, getMine
             }
             setNumber(ROW, COL);
         }else{
-            return false;
+            setCell("");
+            
         }
         
     };
@@ -90,9 +91,17 @@ const Cell = ({ row, col, value, getCol, getRow, getMineValue, getBoard, getMine
     }
 
     return (
-        <Button onClick={(e) => onClick(e)} onContextMenu={(e) => onContextMenu(e)}>
-            {cellText === true ? cell : ""}
-        </Button>
+        <button type="button" 
+                onClick={(e) => onClick(e)}
+                onContextMenu={(e) => onContextMenu(e)}
+                class="py-6 px-6  
+                bg-green-600 
+                hover:bg-green-700 
+                text-white
+                border
+                ">
+        {cellText === true ? cell : ""}
+        </button>
     );
 };
 function mapStateToProps(state) {
@@ -123,7 +132,7 @@ function mapDispatchToProps(dispatch, ownProps) {
 
 export default connect(mapStateToProps, mapDispatchToProps) (Cell);
 
-const Button = styled.button`
-    width: 40px;
-    height: 40px;
-`
+// const Button = styled.button`
+//     width: 40px;
+//     height: 40px;
+// `

@@ -22,8 +22,10 @@ function GameBoard({ getboardArray, getMineCnt, btnState, dispatchSetPlace, disp
     }, [getMineCnt, btnState]);
 
     return (
-        <div>
-            <div>밑에 지뢰게임 보드</div>
+        <div class="block
+                    w-450
+                    mx-auto
+                    ">
             {
                 getboardArray !== undefined && getboardArray.length > 0 && (
                     getboardArray.map((row, i) => {

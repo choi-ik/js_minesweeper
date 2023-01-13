@@ -20,7 +20,7 @@ function Timer({ timerState , timerSet, timerModify }) {
 
     return (    
         <>
-            <span>진행시간 : {timerSet} 초</span>
+            <span class="ml-2">진행시간 : {timerSet} 초</span>
         </>
     )
 }

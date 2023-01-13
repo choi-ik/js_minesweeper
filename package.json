@@ -18,9 +18,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "set PORT=3004 && craco start",
-    "build": "craco build",
-    "test": "craco test",
+    "start": "set PORT=3004 && react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -43,7 +43,10 @@
   },
   "devDependencies": {
     "autoprefixer": "^9.8.8",
+    "css-loader": "^6.7.3",
     "postcss": "^7.0.39",
+    "postcss-loader": "^7.0.2",
+    "style-loader": "^3.3.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17"
   }
 }

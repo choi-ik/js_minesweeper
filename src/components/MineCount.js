@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 지뢰 개수 set 하는 dispatch 함수 */
 
 function MineCount({mineState, mineModify}) {
-    const [text, setText] = useState(10); // mine의 디폴트 개수
+    const [text, setText] = useState(); // mine의 디폴트 개수
 
     const onChange = (e) => {
         setText(e.target.value);
@@ -20,12 +20,31 @@ function MineCount({mineState, mineModify}) {
     }
 
     return (
-        <>
-            <form onSubmit={onSubmit}>
-                <input type="text" value={text} placeholder="지뢰 갯수 입력" onChange={onChange}/>
-            </form>
-            <div>지뢰 개수 : {mineState}</div>
-        </>
+        <span class="mt-5
+                    ml-96
+                    inline-block">
+            <form onSubmit={onSubmit}
+                    class="">
+                {/* <input type="text" value={text} placeholder="지뢰 갯수 입력" onChange={onChange}/> */}
+                <input type="text"
+                        value={text}
+                        placeholder="지뢰 갯수 입력" 
+                        onChange={onChange} 
+                        id="name-with-label" 
+                        size="15"
+                        class="rounded-lg 
+                                border
+                                border-gray-300
+                                h-8
+                                bg-white 
+                                text-gray-700 
+                                placeholder-gray-400 
+                                focus:ring-black
+                                text-center" 
+                        name="email"/>
+            </form>    
+            <span class="ml-2">지뢰 개수 : {mineState}</span>
+        </span>
     )
 }
 // mineSlice의 mine 개수 값 가져옴.

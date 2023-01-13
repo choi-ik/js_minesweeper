@@ -8,12 +8,13 @@ import Timer from "./components/Timer";
 function Main() {
 
     return (
-        <>
+        <div>
             <MineCount />
-            <StartBtn />
             <Timer />
             <GameBoard />
-        </>
+            <StartBtn />
+            
+        </div>
         
     )
 }
