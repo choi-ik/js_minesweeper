@@ -1,29 +1,31 @@
 export const getCellTextColor = (mineCount) => {
     switch(mineCount) {
         case 1:
-            return "black";
+            return "text-black";
         case 2:
-            return "yellow-300";
+            return "text-yellow-300";
         case 3: 
-            return "blue-700";
+            return "text-blue-700";
         case 4:
-            return "red-500";
+            return "text-red-500";
         case 5:
-            return "indigo-700";
+            return "text-indigo-700";
         case 6:
-            return "purple-600";
+            return "text-purple-600";
         case 7:
-            return "pink-300";
+            return "text-pink-300";
         case 8:
-            return "pink-900";
+            return "text-pink-900";
         default: 
-            return "white";
+            return "text-white";
     }
 };
 
 export const getCellBackgroundColor = (isMine) => {
     switch(isMine) {
         case "💣":
-            return 
+            return "gray-800"
+        default:
+            return "green-600"
     }
 }

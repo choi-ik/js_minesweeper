@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { setClickState, setInsertRow, setInsertCol, setInsertBoard } from "../redux/slices/gameBoardSlice";
 import { setBtnText } from "../redux/slices/startBtnSlice";
 import { setTimerState } from "../redux/slices/timerSlice";
-import { getCellTextColor } from "../utils/cellTextColor";
+import { getCellTextColor, getCellBackgroundColor } from "../utils/cellTextColor";
 /* props 순서대로 
     행, 
     열, 
@@ -27,6 +27,7 @@ const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMine
     const [cellState, setCellState] = useState(false); // 셀이 클릭되기 전 false 상태 true가 되면 셀의값이 보임
     const [cellText, setCellText] = useState(0); // 셀이 클릭되었을 때, 보여질 번호 또는 지뢰 
     const [rightClick, setRightClick] = useState(false); // 셀의 우클릭 상태
+    const [bgColor, setBgColor] = useState(); // 백그라운드 컬러의 상태
     const ROW = row; // 행을 받아온 변수
     const COL = col; // 열을 받아온 변수
 
@@ -35,6 +36,8 @@ const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMine
         if(getBtnState === false) setCellState(false);
         // 버튼의 상태가 true가 되면 클릭state의 상태를 treu로 변경.
         if(getBtnState === true) dispatchClickState(true);
+
+        setBgColor(true);
     }, [getMineCnt, getBtnState]);
 
     // 지뢰의 존재여부 판단
@@ -68,6 +71,7 @@ const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMine
             //setCellText(getCellNumber(row, col));
             dispatchInsertBoard(getCellNumber(row, col));
         }
+        if(getBoard[row][col] === "ㅤ") dispatchInsertBoard(getCellNumber(row, col));
     };
 
     // 셀 좌클릭했을때 이벤트
@@ -82,6 +86,7 @@ const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMine
                 dispatchClickState(false);
                 dispatchInsertBoard(getMineValue);
                 dispatchBtnText("실패하였습니다. 다시 시작 하시겠습니까?");
+                setBgColor(false);
             }
             if(getBoard[ROW][COL] === "ㅤ") {
                 setNumber(ROW, COL)
@@ -116,9 +121,8 @@ const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMine
                 onContextMenu={(e) => onContextMenu(e)}
                 class={`py-1 px-1
                         h-[50px] w-[50px]
-                        bg-green-600 
-                        hover:bg-green-700 
-                        text-${getCellTextColor(getBoard[ROW][COL])}
+                        ${bgColor === true ? "bg-indigo-200 hover:bg-indigo-300" : "bg-gray-800"}
+                        ${getCellTextColor(getBoard[ROW][COL])}
                         border`}>
         {cellState === true ? getBoard[ROW][COL] : "ㅤ"}
         </button>

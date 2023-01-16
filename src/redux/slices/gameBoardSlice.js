@@ -8,7 +8,7 @@ export const gameBoardSlice = createSlice({
         col: 9, // 기본 세로 길이
         mineValue: "💣", // 블록에 들어간 마인의 value
         boardArray: [], // 보드 배열의 초기화
-        flag: "⚑", // 깃발 값
+        flag: "🚩", // 깃발 값
         clickState: false,
         setRow: 0,
         setCol: 0,
