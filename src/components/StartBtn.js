@@ -20,8 +20,8 @@ function StartBtn({ btnState, btnText, btnStateModify,  btnTextModify}) {
         }else{
             btnStateModify(true);
             btnTextModify("Reset");
-        } 
-    }
+        }
+    };
 
     return (
         <>

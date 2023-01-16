@@ -18,10 +18,13 @@ function Timer({ timerState , timerSet, timerModify }) {
         }
     }, [timerState]);
 
-    return (    
-        <>
-            <span class="ml-2">진행시간 : {timerSet} 초</span>
-        </>
+    return (   
+        <div class="flex">
+            <div class="h-auto
+                        flex
+                        self-end"> 진행시간 : {timerSet} 초 </div>
+        </div> 
+            
     )
 }
 // startBtnSlice의 버튼 boolean 상태 가져옴.

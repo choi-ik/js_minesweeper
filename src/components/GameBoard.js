@@ -23,9 +23,8 @@ function GameBoard({ getboardArray, getMineCnt, btnState, dispatchSetPlace, disp
 
     return (
         <div class="block
-                    w-450
-                    mx-auto
-                    ">
+                    w-[fit-content]
+                    mx-auto">
             {
                 getboardArray !== undefined && getboardArray.length > 0 && (
                     getboardArray.map((row, i) => {
@@ -50,7 +49,6 @@ function GameBoard({ getboardArray, getMineCnt, btnState, dispatchSetPlace, disp
 }
 
 function mapStateToProps(state, ownProps) {
-    console.log(state,"게임보드 컴포넌트에서 확인", state.gameBoardSet.boardArray.length," 길이 요만큼");
     return {
         getboardArray: state.gameBoardSet.boardArray,
         getMineCnt: state.mineSet.mine,

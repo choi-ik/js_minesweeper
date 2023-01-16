@@ -3,7 +3,7 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     width: {
-      450: "450px"
+      450: "450px",
     },
     color: {
       black: "#1c1917"

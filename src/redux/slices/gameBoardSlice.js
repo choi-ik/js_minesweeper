@@ -1,15 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { setBtnState } from "./startBtnSlice";
 
 export const gameBoardSlice = createSlice({
     name: "gameBoardSlice",
     initialState: {
         row: 9, // 기본 가로 길이
         col: 9, // 기본 세로 길이
-        mineValue: "*", // 블록에 들어간 마인의 value
+        mineValue: "💣", // 블록에 들어간 마인의 value
         boardArray: [], // 보드 배열의 초기화
-        cellRow: 0, //Cell.js에서 받아온 행 값 저장
-        cellCol: 0, // Cell,js에서 받아온 열 값 저장
-        flag: "@" // 깃발 값
+        flag: "⚑", // 깃발 값
+        clickState: false,
+        setRow: 0,
+        setCol: 0,
     },
     reducers: {
         // 게임 보드 2차원 배열로 setting
@@ -35,19 +37,26 @@ export const gameBoardSlice = createSlice({
                 if(state.boardArray[ROW][COL] === 0) state.boardArray[ROW][COL] = state.mineValue;
             }
         },
-        setRow: (state, action) => {
-            state.cellRow = action.payload;
-            console.log(action.payload)
+        setClickState: (state, action) => {
+            state.clickState = action.payload;
         },
-        setCol: (state, action) => {
-            state.cellCol = action.payload;
+        setInsertBoard: (state, action) => {
+            state.boardArray[state.setRow][state.setCol] = action.payload;
         },
+        setInsertRow: (state, action) => {
+            state.setRow = action.payload;
+        },
+        setInsertCol: (state, action) => {
+            state.setCol = action.payload;
+        }
     }
 });
 
 export const {
     setPlace,
     setRandomMine,
-    setRow,
-    setCol
+    setClickState,
+    setInsertBoard,
+    setInsertRow,
+    setInsertCol
 } = gameBoardSlice.actions;

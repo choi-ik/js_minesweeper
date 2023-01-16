@@ -1,19 +1,20 @@
 import React from "react";
 import GameBoard from "./components/GameBoard";
-import GameEx2 from "./components/GameEx2";
 import MineCount from "./components/MineCount";
 import StartBtn from "./components/StartBtn";
-import Timer from "./components/Timer";
 
 function Main() {
 
     return (
         <div>
+            <h1 class="mt-2
+                        text-5xl
+                        w-[fit-content]
+                        font-bold
+                        mx-auto"> MineSweeper </h1>
             <MineCount />
-            <Timer />
             <GameBoard />
             <StartBtn />
-            
         </div>
         
     )

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { setMine } from "../redux/slices/mineSlice";
 import { connect } from "react-redux";
+import Timer from "./Timer";
 
 /* props 순서대로 
 지뢰 개수, 
@@ -20,11 +21,12 @@ function MineCount({mineState, mineModify}) {
     }
 
     return (
-        <span class="mt-5
-                    ml-96
-                    inline-block">
+        <span class="flex
+                    mt-5
+                    justify-center
+                    mb-2">
             <form onSubmit={onSubmit}
-                    class="">
+                    class="mr-[12%]"> 
                 {/* <input type="text" value={text} placeholder="지뢰 갯수 입력" onChange={onChange}/> */}
                 <input type="text"
                         value={text}
@@ -42,10 +44,12 @@ function MineCount({mineState, mineModify}) {
                                 focus:ring-black
                                 text-center" 
                         name="email"/>
-            </form>    
-            <span class="ml-2">지뢰 개수 : {mineState}</span>
+                <span class="text-center"> : {mineState}</span>
+            </form>
+            <Timer />
+            
         </span>
-    )
+    )  
 }
 // mineSlice의 mine 개수 값 가져옴.
 function mapStateToProps(state, ownProps) {
