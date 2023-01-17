@@ -28,7 +28,8 @@ const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMine
 
     const [cellState, setCellState] = useState(false); // 셀이 클릭되기 전 false 상태 true가 되면 셀의값이 보임
     const [rightClick, setRightClick] = useState(false); // 셀의 우클릭 상태
-    const [rClickState, setRClickState] = useState(); // 우클릭시 셀에 원래 들어있던 값
+    const [rClickValue, setRClickValue] = useState(); // 우클릭시 셀에 원래 들어있던 값
+    const [rClickState, setRClickState] = useState();
     const [lClickState, setLClickState] = useState();
     const [bgColor, setBgColor] = useState(); // 백그라운드 컬러의 상태
     const ROW = row; // 행을 받아온 변수
@@ -42,6 +43,7 @@ const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMine
         setRightClick(false);
         setBgColor(true);
         setLClickState(false);
+        setRClickState(false);
     }, [getMineCnt, getBtnState]);
 
     // 지뢰의 존재여부 판단
@@ -111,27 +113,29 @@ const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMine
             // 다시 게임보드 우클릭 시 , 깃발 사라지면서 원래 들어있던 지뢰 또는 숫자를 보드에 넣어줌.
             if(rightClick === true) {
                 setCellState(false);
-                dispatchInsertBoard(rClickState);
+                dispatchInsertBoard(rClickValue);
                 setRightClick(false);
                 dispatchSetPlusMine();
+                setRClickState(false);
             } else {
                 // 초기화 된 게임 보드 우클릭 시, 게임보드에 들어있던 지뢰 또는 숫자를 state에 집어넣음.
                 if(getBoard[ROW][COL] === getMineValue) {
-                    setRClickState(getMineValue);
+                    setRClickValue(getMineValue);
                 } else {
-                    setRClickState(getBoard[ROW][COL]);
+                    setRClickValue(getBoard[ROW][COL]);
                 }
                 dispatchInsertBoard(getFlag);
                 setRightClick(true);
                 dispatchSetMinusMine();
+                setRClickState(true);
             }
         }
     };
-
+ 
     return (
         <button type="button" 
-                onClick={(e) => onClick(e)}
-                onContextMenu={lClickState === true ? false : (e) => onContextMenu(e)}
+                onClick={rClickState === true ? false : (e) => onClick(e)}
+                onContextMenu={lClickState === true ? (e) => {e.preventDefault()} : (e) => onContextMenu(e)}
                 class={`py-1 px-1
                         h-[50px] w-[50px]
                         ${bgColor === true ? "bg-indigo-200 hover:bg-indigo-300" : "bg-gray-800"}
