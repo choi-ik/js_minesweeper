@@ -1,24 +1,52 @@
-import React, { useState } from "react";
-import { setMine } from "../redux/slices/mineSlice";
+import React, { useEffect, useRef, useState } from "react";
+import { setFlagCnt, setMine } from "../redux/slices/mineSlice";
 import { connect } from "react-redux";
 import Timer from "./Timer";
+import { isDisabled } from "@testing-library/user-event/dist/utils";
 
 /* props 순서대로 
 지뢰 개수, 
 지뢰 개수 set 하는 dispatch 함수 */
 
-function MineCount({mineState, mineModify}) {
+function MineCount({mineCnt, flagCnt, btnState, dispatchSetMine, dispatchSetFlagCnt}) {
     const [text, setText] = useState(); // mine의 디폴트 개수
+    const [textBoolean, setTextBoolean] = useState(true);
+    const inputRef = useRef(null);
 
+    const inputState = () => {
+        if(btnState === false) {
+            return inputRef.current.disabled = false;
+        } else {
+            return inputRef.current.disabled = true;
+        }
+        
+    };
+    
     const onChange = (e) => {
         setText(e.target.value);
+        const textValue = Number(e.target.value);
+        setTextBoolean(Number.isNaN(textValue));
     };
 
     const onSubmit = (e) => {
         e.preventDefault();
-        mineModify(text);
+        if(textBoolean === true){
+            alert("30 이하의 숫자만 입력해 주십시요.");
+        } else {
+            if(text > 30){
+                alert("30 이하의 숫자만 입력해 주십시요.");
+            } else {
+                dispatchSetMine(text);
+                dispatchSetFlagCnt(text);
+            }
+        }
         setText("");
-    }
+    };
+
+    useEffect(() => {
+        if(btnState === false) dispatchSetFlagCnt(mineCnt);
+        inputState();
+    },[btnState, textBoolean])
 
     return (
         <span class="flex
@@ -34,6 +62,7 @@ function MineCount({mineState, mineModify}) {
                         onChange={onChange} 
                         id="name-with-label" 
                         size="15"
+                        ref={inputRef}
                         class="rounded-lg 
                                 border
                                 border-gray-300
@@ -44,7 +73,7 @@ function MineCount({mineState, mineModify}) {
                                 focus:ring-black
                                 text-center" 
                         name="email"/>
-                <span class="text-center"> : {mineState}</span>
+                <span class="text-center"> : {flagCnt}</span>
             </form>
             <Timer />
             
@@ -54,13 +83,16 @@ function MineCount({mineState, mineModify}) {
 // mineSlice의 mine 개수 값 가져옴.
 function mapStateToProps(state, ownProps) {
     return {
-        mineState: state.mineSet.mine
+        mineCnt: state.mineSet.mine,
+        flagCnt: state.mineSet.flagCnt,
+        btnState: state.startBtnSet.btnState
     }
 }
 // mineSlice에 mine 개수 dispatch.
 function mapDispatchToProps(dispatch, ownProps) {
     return {
-        mineModify: (text) => dispatch(setMine(text)) 
+        dispatchSetMine: (text) => dispatch(setMine(text)),
+        dispatchSetFlagCnt: (value) => dispatch(setFlagCnt(value))
     }
 }
 

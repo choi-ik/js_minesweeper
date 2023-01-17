@@ -37,9 +37,7 @@ function mapStateToProps(state, ownProps) {
 // startBtnSlice에 reducer에 dispatch.
 function mapDispatchToProps(dispatch, ownProps) {
     return {
-        timerModify: (time) => {
-            dispatch(setTimer(time));
-        }
+        timerModify: (time) => dispatch(setTimer(time))
     }
 }
 

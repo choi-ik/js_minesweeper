@@ -58,12 +58,8 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
     return {
-        dispatchSetPlace: () => {
-            dispatch(setPlace());
-        },
-        dispatchSetRandomMine: (mineCnt) => {
-            dispatch(setRandomMine(mineCnt))
-        }
+        dispatchSetPlace: () => dispatch(setPlace()),
+        dispatchSetRandomMine: (mineCnt) => dispatch(setRandomMine(mineCnt))
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps) (GameBoard);

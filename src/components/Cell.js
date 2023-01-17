@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { setClickState, setInsertRow, setInsertCol, setInsertBoard } from "../redux/slices/gameBoardSlice";
+import { setMinusMine, setPlusMine } from "../redux/slices/mineSlice";
 import { setBtnText } from "../redux/slices/startBtnSlice";
 import { setTimerState } from "../redux/slices/timerSlice";
-import { getCellTextColor, getCellBackgroundColor } from "../utils/cellTextColor";
+import { getCellTextColor } from "../utils/cellTextColor";
 /* props 순서대로 
     행, 
     열, 
@@ -19,13 +20,13 @@ import { getCellTextColor, getCellBackgroundColor } from "../utils/cellTextColor
     시작버튼의 텍스트를 바꿀 dispatch,
     타이머의 boolean 상태를 바꿀 dispatch,
     셀 클릭의 boolean 상태 dispatch,
-    행 / 열 / 행,열에 해당하는 보드의 값 dispatch */
+    행 / 열 / 행,열에 해당하는 보드의 값 dispatch,
+    왼쪽 상단에 나타난 지뢰갯수가 깃발 개수만큼 증가 / 감소 dispatch */
 
 const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMineCnt, getFlag, getBtnState, getClickState,
-    dispatchBtnText, dispatchTimerState, dispatchClickState, dispatchInsertRow, dispatchInsertCol, dispatchInsertBoard }) => {
+    dispatchBtnText, dispatchTimerState, dispatchClickState, dispatchInsertRow, dispatchInsertCol, dispatchInsertBoard, dispatchSetPlusMine, dispatchSetMinusMine }) => {
 
     const [cellState, setCellState] = useState(false); // 셀이 클릭되기 전 false 상태 true가 되면 셀의값이 보임
-    const [cellText, setCellText] = useState(0); // 셀이 클릭되었을 때, 보여질 번호 또는 지뢰 
     const [rightClick, setRightClick] = useState(false); // 셀의 우클릭 상태
     const [bgColor, setBgColor] = useState(); // 백그라운드 컬러의 상태
     const ROW = row; // 행을 받아온 변수
@@ -36,7 +37,7 @@ const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMine
         if(getBtnState === false) setCellState(false);
         // 버튼의 상태가 true가 되면 클릭state의 상태를 treu로 변경.
         if(getBtnState === true) dispatchClickState(true);
-
+        setRightClick(false);
         setBgColor(true);
     }, [getMineCnt, getBtnState]);
 
@@ -104,13 +105,13 @@ const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMine
             dispatchInsertCol(COL);
             setCellState(true);
             if(rightClick === true) {
-                
                 dispatchInsertBoard("ㅤ");
                 setRightClick(false);
+                dispatchSetPlusMine();
             } else {
-                
                 dispatchInsertBoard(getFlag);
                 setRightClick(true);
+                dispatchSetMinusMine();
             }
         }
     };
@@ -142,24 +143,14 @@ function mapStateToProps(state) {
 }
 function mapDispatchToProps(dispatch, ownProps) {
     return {
-        dispatchBtnText: (text) => {
-            dispatch(setBtnText(text))
-        },
-        dispatchTimerState: (state) => {
-            dispatch(setTimerState(state))
-        },
-        dispatchClickState: (state) => {
-            dispatch(setClickState(state))
-        },
-        dispatchInsertRow: (value) => {
-            dispatch(setInsertRow(value))
-        },
-        dispatchInsertCol: (value) => {
-            dispatch(setInsertCol(value))
-        },
-        dispatchInsertBoard: (value) => {
-            dispatch(setInsertBoard(value))
-        }
+        dispatchBtnText: (text) => dispatch(setBtnText(text)),
+        dispatchTimerState: (state) => dispatch(setTimerState(state)),
+        dispatchClickState: (state) => dispatch(setClickState(state)),
+        dispatchInsertRow: (value) => dispatch(setInsertRow(value)),
+        dispatchInsertCol: (value) => dispatch(setInsertCol(value)),
+        dispatchInsertBoard: (value) => dispatch(setInsertBoard(value)),
+        dispatchSetPlusMine: () => dispatch(setPlusMine()),
+        dispatchSetMinusMine: () => dispatch(setMinusMine())
     }
 }
 
