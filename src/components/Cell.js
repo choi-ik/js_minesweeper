@@ -26,12 +26,13 @@ import { getCellTextColor } from "../utils/cellTextColor";
 const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMineCnt, getFlag, getBtnState, getClickState,
     dispatchBtnText, dispatchTimerState, dispatchClickState, dispatchInsertRow, dispatchInsertCol, dispatchInsertBoard, dispatchSetPlusMine, dispatchSetMinusMine }) => {
 
-    const [cellState, setCellState] = useState(false); // 셀이 클릭되기 전 false 상태 true가 되면 셀의값이 보임
+    const [cellState, setCellState] = useState(); // 셀이 클릭되기 전 false 상태 true가 되면 셀의값이 보임
     const [rightClick, setRightClick] = useState(false); // 셀의 우클릭 상태
     const [rClickValue, setRClickValue] = useState(); // 우클릭시 셀에 원래 들어있던 값
     const [rClickState, setRClickState] = useState();
     const [lClickState, setLClickState] = useState();
     const [bgColor, setBgColor] = useState(); // 백그라운드 컬러의 상태
+    
     const ROW = row; // 행을 받아온 변수
     const COL = col; // 열을 받아온 변수
 
@@ -73,7 +74,11 @@ const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMine
 
     // 클릭한 셀의 행과 열의 vlaue를 인자로 넘겨받아 주변 지뢰 개수를 set해줌
     function setNumber(row, col) {
-        if(getBoard[row][col] === 0 && getCellNumber(row, col) !== 0) {
+        if(getBoard[row][col] === -1 && getCellNumber(row, col) !== 0) {
+            //setCellText(getCellNumber(row, col));
+            dispatchInsertBoard(getCellNumber(row, col));
+        }
+        if(getBoard[row][col] === -1 && getCellNumber(row, col) === 0) {
             //setCellText(getCellNumber(row, col));
             dispatchInsertBoard(getCellNumber(row, col));
         }

@@ -21,7 +21,7 @@ export const gameBoardSlice = createSlice({
                 for(let i=0; i<state.row; i++) {
                     state.boardArray.push([]);
                     for(let j=0; j<state.col; j++) {
-                        state.boardArray[i].push(0);
+                        state.boardArray[i].push(-1);
                     }
                 }
             }
@@ -34,7 +34,7 @@ export const gameBoardSlice = createSlice({
                 let COL = Math.floor(Math.random() * state.col);
 
                 if(state.boardArray[ROW][COL] === state.mineValue) i++;
-                if(state.boardArray[ROW][COL] === 0) state.boardArray[ROW][COL] = state.mineValue;
+                if(state.boardArray[ROW][COL] === -1) state.boardArray[ROW][COL] = state.mineValue;
             }
         },
         setClickState: (state, action) => {
@@ -48,8 +48,8 @@ export const gameBoardSlice = createSlice({
         },
         setInsertCol: (state, action) => {
             state.setCol = action.payload;
-        }
-    }
+        },
+    },
 });
 
 export const {
