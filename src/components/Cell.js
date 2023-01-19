@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { setClickState, setInsertRow, setInsertCol, setInsertBoard } from "../redux/slices/gameBoardSlice";
+import { setNumbers, setClickState, setInsertRow, setInsertCol, setInsertBoard } from "../redux/slices/gameBoardSlice";
 import { setMinusMine, setPlusMine } from "../redux/slices/mineSlice";
 import { setBtnText } from "../redux/slices/startBtnSlice";
 import { setTimerState } from "../redux/slices/timerSlice";
@@ -23,18 +23,18 @@ import { getCellTextColor } from "../utils/cellTextColor";
     행 / 열 / 행,열에 해당하는 보드의 값 dispatch,
     왼쪽 상단에 나타난 지뢰갯수가 깃발 개수만큼 증가 / 감소 dispatch */
 
-const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMineCnt, getFlag, getBtnState, getClickState,
-    dispatchBtnText, dispatchTimerState, dispatchClickState, dispatchInsertRow, dispatchInsertCol, dispatchInsertBoard, dispatchSetPlusMine, dispatchSetMinusMine }) => {
+const Cell = ({ row, col, value, getMineValue, getBoard, getMineCnt, getFlag, getBtnState, getClickState,
+    dispatchBtnText, dispatchTimerState, dispatchClickState, dispatchSetPlusMine, dispatchSetMinusMine, setNumbers, setInsertBoard, setInsertRow, setInsertCol }) => {
 
     const [cellState, setCellState] = useState(); // 셀이 클릭되기 전 false 상태 true가 되면 셀의값이 보임
     const [rightClick, setRightClick] = useState(false); // 셀의 우클릭 상태
-    const [rClickValue, setRClickValue] = useState(); // 우클릭시 셀에 원래 들어있던 값
-    const [rClickState, setRClickState] = useState();
     const [lClickState, setLClickState] = useState();
+    const [isFlag, setIsFlag] = useState(false);
     const [bgColor, setBgColor] = useState(); // 백그라운드 컬러의 상태
     
     const ROW = row; // 행을 받아온 변수
     const COL = col; // 열을 받아온 변수
+    const visited = {};
 
     useEffect(() => {
          // 지뢰 개수가 변하면 클릭되었던 셀들을 false로 닫아주고, 시적버튼의 상태에 따라 버튼의 상태도 변경.
@@ -44,9 +44,108 @@ const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMine
         setRightClick(false);
         setBgColor(true);
         setLClickState(false);
-        setRClickState(false);
+        setIsFlag(false);
     }, [getMineCnt, getBtnState]);
 
+    
+    function dfsCell(row, col) {
+        
+        if(getBoard[row][col] === 0 || getBoard[row][col] === "*") {
+            visited[`${row}`+`${col}`] = true;
+            // 위쪽으로 진행
+            if(getBoard[row][col+1] === -1 && !visited[`${row}`+`${col+1}`]) {
+                setNumbers(row, col+1);
+                if(getBoard[row][col+1] === 0){
+                    setInsertRow(row);
+                    setInsertCol(col+1);
+                    setInsertBoard("*");
+                    dfsCell(row, col+1);    
+                }
+            };
+        }
+        console.log(getBoard,"DFS 배열");
+    }
+
+    // 셀 좌클릭했을때 이벤트
+    const onClick = (e) => {
+        if(getBtnState === true && getClickState === true) {
+            setCellState(true);
+            setLClickState(true);
+            setNumbers(ROW, COL);
+            // visited[`${row}`+`${col}`] = true;
+            // console.log(visited);
+            if(getBoard[ROW][COL] === getMineValue) {
+                dispatchTimerState(false);
+                dispatchClickState(false);
+                dispatchBtnText("실패하였습니다. 다시 시작 하시겠습니까?");
+                setBgColor(false);
+            };
+            // if(getBoard[ROW][COL] === "ㅤ") {
+            //     setNumbers(ROW, COL)
+            // }
+        } else {
+            return false;
+        }
+    };
+
+    // 셀 우클릭했을때 깃발 이벤트(토글)
+    const onContextMenu = (e) => {
+        e.preventDefault();
+        if(getBtnState === true && getClickState === true) {
+            setCellState(true);
+            if(rightClick === true) {
+                setCellState(false);
+                setRightClick(false);
+                dispatchSetPlusMine();
+                setIsFlag(false);
+            } else {
+                setIsFlag(true);
+                setRightClick(true);
+                dispatchSetMinusMine();
+            }
+        }
+    };
+ 
+    return (
+        <button type="button" 
+                onClick={isFlag ? false : (e) => onClick(e)}
+                onContextMenu={lClickState ? (e) => {e.preventDefault()} : (e) => onContextMenu(e)}
+                class={`py-1 px-1
+                        h-[50px] w-[50px]
+                        ${bgColor === true ? "bg-indigo-200 hover:bg-indigo-300" : "bg-gray-800"}
+                        ${getCellTextColor(getBoard[ROW][COL])}
+                        border`}>
+        {cellState === true ? isFlag ? getFlag : getBoard[ROW][COL] : "ㅤ"}
+        </button>
+    );
+};
+function mapStateToProps(state) {
+    return{
+        getMineValue: state.gameBoardSet.mineValue,
+        getBoard: state.gameBoardSet.boardArray,
+        getMineCnt: state.mineSet.mine,
+        getFlag: state.gameBoardSet.flag,
+        getBtnState: state.startBtnSet.btnState,
+        getClickState: state.gameBoardSet.clickState,
+    }
+}
+function mapDispatchToProps(dispatch, ownProps) {
+    return {
+        dispatchBtnText: (text) => dispatch(setBtnText(text)),
+        dispatchTimerState: (state) => dispatch(setTimerState(state)),
+        dispatchClickState: (state) => dispatch(setClickState(state)),
+        dispatchSetPlusMine: () => dispatch(setPlusMine()),
+        dispatchSetMinusMine: () => dispatch(setMinusMine()),
+        setNumbers: (row, col) => dispatch(setNumbers({row, col})),
+        setInsertBoard: (value) => dispatch(setInsertBoard(value)),
+        setInsertRow: (value) => dispatch(setInsertRow(value)),
+        setInsertCol: (value) => dispatch(setInsertCol(value)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps) (Cell);
+
+/*  일단 주석 처리.
     // 지뢰의 존재여부 판단
     function isExistMine(row, col) {
          // ArrayIndexOutOfBoundsException 예방
@@ -84,95 +183,4 @@ const Cell = ({ row, col, value, getRow, getCol, getMineValue, getBoard, getMine
         }
         if(getBoard[row][col] === "ㅤ") dispatchInsertBoard(getCellNumber(row, col));
     };
-
-    // 셀 좌클릭했을때 이벤트
-    const onClick = (e) => {
-        if(getBtnState === true && getClickState === true) {
-            dispatchInsertRow(ROW);
-            dispatchInsertCol(COL);
-            setCellState(true);
-            setNumber(ROW, COL);
-            setLClickState(true);
-            if(getBoard[ROW][COL] === getMineValue) {
-                dispatchTimerState(false);
-                dispatchClickState(false);
-                dispatchInsertBoard(getMineValue);
-                dispatchBtnText("실패하였습니다. 다시 시작 하시겠습니까?");
-                setBgColor(false);
-            }
-            if(getBoard[ROW][COL] === "ㅤ") {
-                setNumber(ROW, COL)
-            }
-        } else {
-            return false;
-        }
-    };
-
-    // 셀 우클릭했을때 깃발 이벤트(토글)
-    const onContextMenu = (e) => {
-        e.preventDefault();
-        if(getBtnState === true && getClickState === true) {
-            dispatchInsertRow(ROW);
-            dispatchInsertCol(COL);
-            setCellState(true);
-            // 다시 게임보드 우클릭 시 , 깃발 사라지면서 원래 들어있던 지뢰 또는 숫자를 보드에 넣어줌.
-            if(rightClick === true) {
-                setCellState(false);
-                dispatchInsertBoard(rClickValue);
-                setRightClick(false);
-                dispatchSetPlusMine();
-                setRClickState(false);
-            } else {
-                // 초기화 된 게임 보드 우클릭 시, 게임보드에 들어있던 지뢰 또는 숫자를 state에 집어넣음.
-                if(getBoard[ROW][COL] === getMineValue) {
-                    setRClickValue(getMineValue);
-                } else {
-                    setRClickValue(getBoard[ROW][COL]);
-                }
-                dispatchInsertBoard(getFlag);
-                setRightClick(true);
-                dispatchSetMinusMine();
-                setRClickState(true);
-            }
-        }
-    };
- 
-    return (
-        <button type="button" 
-                onClick={rClickState === true ? false : (e) => onClick(e)}
-                onContextMenu={lClickState === true ? (e) => {e.preventDefault()} : (e) => onContextMenu(e)}
-                class={`py-1 px-1
-                        h-[50px] w-[50px]
-                        ${bgColor === true ? "bg-indigo-200 hover:bg-indigo-300" : "bg-gray-800"}
-                        ${getCellTextColor(getBoard[ROW][COL])}
-                        border`}>
-        {cellState === true ? getBoard[ROW][COL] : "ㅤ"}
-        </button>
-    );
-};
-function mapStateToProps(state) {
-    return{
-        getCol: state.gameBoardSet.col,
-        getRow: state.gameBoardSet.row,
-        getMineValue: state.gameBoardSet.mineValue,
-        getBoard: state.gameBoardSet.boardArray,
-        getMineCnt: state.mineSet.mine,
-        getFlag: state.gameBoardSet.flag,
-        getBtnState: state.startBtnSet.btnState,
-        getClickState: state.gameBoardSet.clickState,
-    }
-}
-function mapDispatchToProps(dispatch, ownProps) {
-    return {
-        dispatchBtnText: (text) => dispatch(setBtnText(text)),
-        dispatchTimerState: (state) => dispatch(setTimerState(state)),
-        dispatchClickState: (state) => dispatch(setClickState(state)),
-        dispatchInsertRow: (value) => dispatch(setInsertRow(value)),
-        dispatchInsertCol: (value) => dispatch(setInsertCol(value)),
-        dispatchInsertBoard: (value) => dispatch(setInsertBoard(value)),
-        dispatchSetPlusMine: () => dispatch(setPlusMine()),
-        dispatchSetMinusMine: () => dispatch(setMinusMine())
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps) (Cell);
+ */
