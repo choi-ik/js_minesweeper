@@ -2,27 +2,33 @@ import React, { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { setTimer } from "../redux/slices/timerSlice";
 
-function Timer({ timerState , timerSet, timerModify }) {
+/*
+    타이머의 boolean 상태,
+    타이머 시간값,
+    ---------------------
+    타이머 셋팅 dispatch
+*/
+function Timer({ getTimerState , getTimerSet, setTimer }) {
 
     useEffect(() => {
-        if(timerState === false) return;
-        if(timerState === true) {
+        if(getTimerState === false) return;
+        if(getTimerState === true) {
             let time = setInterval(() => {
-                timerSet += 1;
-                timerModify(timerSet);
+                getTimerSet += 1;
+                setTimer(getTimerSet);
             }, 1000);
             return () => {
                 clearInterval(time);
-                timerModify(0);
+                setTimer(0);
             }
         }
-    }, [timerState]);
+    }, [getTimerState]);
 
     return (   
         <div class="flex">
             <div class="h-auto
                         flex
-                        self-end"> 진행시간 : {timerSet} 초 </div>
+                        self-end"> 진행시간 : {getTimerSet} 초 </div>
         </div> 
             
     )
@@ -30,14 +36,14 @@ function Timer({ timerState , timerSet, timerModify }) {
 // startBtnSlice의 버튼 boolean 상태 가져옴.
 function mapStateToProps(state, ownProps) {
     return {
-        timerState: state.timerSet.state,
-        timerSet: state.timerSet.timer
+        getTimerState: state.timerSet.state,
+        getTimerSet: state.timerSet.timer
     }
 }
 // startBtnSlice에 reducer에 dispatch.
 function mapDispatchToProps(dispatch, ownProps) {
     return {
-        timerModify: (time) => dispatch(setTimer(time))
+        setTimer: (time) => dispatch(setTimer(time))
     }
 }
 

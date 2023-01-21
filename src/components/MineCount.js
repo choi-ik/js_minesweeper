@@ -5,16 +5,21 @@ import Timer from "./Timer";
 import { isDisabled } from "@testing-library/user-event/dist/utils";
 
 /* props 순서대로 
-지뢰 개수, 
-지뢰 개수 set 하는 dispatch 함수 */
+    지뢰 개수, 
+    깃발 개수,
+    시작버튼의 상태,
+-------------------------
+    마인개수 변경 dispatch
+    깃발 개수 변경 dispatch 
+*/
 
-function MineCount({mineCnt, flagCnt, btnState, dispatchSetMine, dispatchSetFlagCnt}) {
+function MineCount({getMineCnt, getFlagCnt, getBtnState, setMine, setFlagCnt}) {
     const [text, setText] = useState(); // mine의 디폴트 개수
     const [textBoolean, setTextBoolean] = useState(true);
     const inputRef = useRef(null);
 
     const inputState = () => {
-        if(btnState === false) {
+        if(getBtnState === false) {
             return inputRef.current.disabled = false;
         } else {
             return inputRef.current.disabled = true;
@@ -36,17 +41,17 @@ function MineCount({mineCnt, flagCnt, btnState, dispatchSetMine, dispatchSetFlag
             if(text > 30){
                 alert("30 이하의 숫자만 입력해 주십시요.");
             } else {
-                dispatchSetMine(text);
-                dispatchSetFlagCnt(text);
+                setMine(text);
+                setFlagCnt(text);
             }
         }
         setText("");
     };
 
     useEffect(() => {
-        if(btnState === false) dispatchSetFlagCnt(mineCnt);
+        if(getBtnState === false) setFlagCnt(getMineCnt);
         inputState();
-    },[btnState, textBoolean])
+    },[getBtnState, textBoolean])
 
     return (
         <span class="flex
@@ -73,7 +78,7 @@ function MineCount({mineCnt, flagCnt, btnState, dispatchSetMine, dispatchSetFlag
                                 focus:ring-black
                                 text-center" 
                         name="email"/>
-                <span class="text-center"> : {flagCnt}</span>
+                <span class="text-center"> : {getFlagCnt}</span>
             </form>
             <Timer />
             
@@ -83,16 +88,16 @@ function MineCount({mineCnt, flagCnt, btnState, dispatchSetMine, dispatchSetFlag
 // mineSlice의 mine 개수 값 가져옴.
 function mapStateToProps(state, ownProps) {
     return {
-        mineCnt: state.mineSet.mine,
-        flagCnt: state.mineSet.flagCnt,
-        btnState: state.startBtnSet.btnState
+        getMineCnt: state.mineSet.mine,
+        getFlagCnt: state.mineSet.flagCnt,
+        getBtnState: state.startBtnSet.btnState,
     }
 }
 // mineSlice에 mine 개수 dispatch.
 function mapDispatchToProps(dispatch, ownProps) {
     return {
-        dispatchSetMine: (text) => dispatch(setMine(text)),
-        dispatchSetFlagCnt: (value) => dispatch(setFlagCnt(value))
+        setMine: (text) => dispatch(setMine(text)),
+        setFlagCnt: (value) => dispatch(setFlagCnt(value))
     }
 }
 

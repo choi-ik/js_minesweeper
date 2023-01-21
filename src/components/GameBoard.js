@@ -3,32 +3,33 @@ import { connect } from "react-redux";
 import { setPlace, setRandomMine, setVisited } from "../redux/slices/gameBoardSlice";
 import Cell from "./Cell";
 /*props 순서대로
-    2차원 배열 게임보드,
+    게입 보드 배열,
     지뢰개수,
     버튼의 boolean 상태,
-    배열 setting dispatch,
-    배열에 랜덤으로 지뢰 심는 dispatch
-
+    게임 보드 배열 초기화
+    ----------------------------
+    배열에 지뢰 랜덤 배치 dispatch
+    방문 배열 초기화 dispatch
 */
-function GameBoard({ getboardArray, getMineCnt, btnState, dispatchSetPlace, dispatchSetRandomMine, setVisited }) {
-    console.log(getboardArray);
+function GameBoard({ getBoard, getMineCnt, getBtnState, setPlace, setRandomMine, setVisited }) {
+    console.log(getBoard);
     useEffect(() => {
-        if(btnState === true) {
-            dispatchSetPlace();
-            dispatchSetRandomMine(getMineCnt);
+        if(getBtnState === true) {
+            setPlace();
+            setRandomMine(getMineCnt);
             setVisited();
         }else{
-            dispatchSetPlace();
+            setPlace();
         }
-    }, [getMineCnt, btnState]);
+    }, [getMineCnt, getBtnState]);
 
     return (
         <div class="block
                     w-[fit-content]
                     mx-auto">
             {
-                getboardArray !== undefined && getboardArray.length > 0 && (
-                    getboardArray.map((row, i) => {
+                getBoard !== undefined && getBoard.length > 0 && (
+                    getBoard.map((row, i) => {
                         return (
                             <div>  
                                 {
@@ -36,8 +37,8 @@ function GameBoard({ getboardArray, getMineCnt, btnState, dispatchSetPlace, disp
                                         return(
                                             <Cell row={i}
                                                   col={j}
-                                                  value={getboardArray[i][j].value}
-                                                  isOpen={getboardArray[i][j].isOpen}/>
+                                                  value={getBoard[i][j].value}
+                                                  isOpen={getBoard[i][j].isOpen}/>
                                         )
                                     })
                                 }
@@ -52,16 +53,16 @@ function GameBoard({ getboardArray, getMineCnt, btnState, dispatchSetPlace, disp
 
 function mapStateToProps(state, ownProps) {
     return {
-        getboardArray: state.gameBoardSet.boardArray,
+        getBoard: state.gameBoardSet.boardArray,
         getMineCnt: state.mineSet.mine,
-        btnState: state.startBtnSet.btnState,
+        getBtnState: state.startBtnSet.btnState,
     };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
     return {
-        dispatchSetPlace: () => dispatch(setPlace()),
-        dispatchSetRandomMine: (mineCnt) => dispatch(setRandomMine(mineCnt)),
+        setPlace: () => dispatch(setPlace()),
+        setRandomMine: (mineCnt) => dispatch(setRandomMine(mineCnt)),
         setVisited: () => dispatch(setVisited()),
     }
 }

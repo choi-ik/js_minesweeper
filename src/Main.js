@@ -1,5 +1,4 @@
 import React from "react";
-import EXX from "./components/EXX";
 import GameBoard from "./components/GameBoard";
 import MineCount from "./components/MineCount";
 import StartBtn from "./components/StartBtn";
@@ -17,7 +16,6 @@ function Main() {
             <MineCount />
             <GameBoard />
             <StartBtn />
-            <EXX />
         </div>
         
     )
