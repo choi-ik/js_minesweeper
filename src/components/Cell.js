@@ -101,7 +101,7 @@ const Cell = ({ row, col, value, isOpen, getMineValue, getBoard, getMineCnt, get
        
          {/* {getBoard[ROW][COL]==="*" ? "ㅤ" : getBoard[ROW][COL] === 0 ? "X" : getBoard[ROW][COL]} */}
          {isOpen ? getBoard[ROW][COL].value === 0 ? "ㅤ" : getBoard[ROW][COL].value : isFlag ? getFlag : "ㅤ"}
-         
+         {getOepnCount === 81 - getMineCnt ? getBoard[ROW][COL].value === getMineValue ? getMineValue : false : false}
         </button>
     );
 };
