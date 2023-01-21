@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import { setPlace, setRandomMine } from "../redux/slices/gameBoardSlice";
+import { setPlace, setRandomMine, setVisited } from "../redux/slices/gameBoardSlice";
 import Cell from "./Cell";
 /*props 순서대로
     2차원 배열 게임보드,
@@ -10,12 +10,13 @@ import Cell from "./Cell";
     배열에 랜덤으로 지뢰 심는 dispatch
 
 */
-function GameBoard({ getboardArray, getMineCnt, btnState, dispatchSetPlace, dispatchSetRandomMine }) {
+function GameBoard({ getboardArray, getMineCnt, btnState, dispatchSetPlace, dispatchSetRandomMine, setVisited }) {
     console.log(getboardArray);
     useEffect(() => {
         if(btnState === true) {
             dispatchSetPlace();
             dispatchSetRandomMine(getMineCnt);
+            setVisited();
         }else{
             dispatchSetPlace();
         }
@@ -59,7 +60,8 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch, ownProps) {
     return {
         dispatchSetPlace: () => dispatch(setPlace()),
-        dispatchSetRandomMine: (mineCnt) => dispatch(setRandomMine(mineCnt))
+        dispatchSetRandomMine: (mineCnt) => dispatch(setRandomMine(mineCnt)),
+        setVisited: () => dispatch(setVisited()),
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps) (GameBoard);

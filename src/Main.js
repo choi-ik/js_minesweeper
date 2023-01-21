@@ -1,5 +1,4 @@
 import React from "react";
-import BFS from "./components/BFS";
 import GameBoard from "./components/GameBoard";
 import MineCount from "./components/MineCount";
 import StartBtn from "./components/StartBtn";
@@ -16,7 +15,6 @@ function Main() {
             <MineCount />
             <GameBoard />
             <StartBtn />
-            <BFS />
         </div>
         
     )

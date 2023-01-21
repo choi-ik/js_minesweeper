@@ -13,6 +13,7 @@ export const gameBoardSlice = createSlice({
         setRow: 0,
         setCol: 0,
         isOpen: false,
+        visited: [],
     },
     reducers: {
         // 게임 보드 2차원 배열로 setting
@@ -29,7 +30,6 @@ export const gameBoardSlice = createSlice({
         },
         // 게임 보드에 마인 세팅
         setRandomMine: (state, action) => {
-            console.log(action.payload,"지뢰 개수");
             for(let i=action.payload; i>0; i--) {
                 let ROW = Math.floor(Math.random() * state.row);
                 let COL = Math.floor(Math.random() * state.col);
@@ -50,24 +50,27 @@ export const gameBoardSlice = createSlice({
         setInsertCol: (state, action) => {
             state.setCol = action.payload;
         },
+        setVisited: (state, action) => {
+            state.visited = [];
+                for(let i=0; i<state.row; i++){
+                    state.visited.push([]);
+                    for(let j=0; j<state.col; j++){
+                        state.visited[i].push(false);
+                    }
+                }
+            console.log(state.visited,"방문 배열");
+        },
         setNumbers: (state, action) => {
             const {row, col} = action.payload;
             console.log(row, col);
+            state.visited[row][col] = true;
 
-            function dfsCell(row ,col) {
-                //위쪽으로
-                if(state.boardArray[row-1][col] === 0){
-                    if(!getCellNumber(row-1, col)){
-                        state.boardArray[row-1][col] = "*"
-                        dfsCell(row-1, col);
-                    } 
-                }
-                if(state.boardArray[row+1][col] === 0 || state.boardArray[row+1][col] === "*"){
-                    if(!getCellNumber(row+1, col)){
-                        state.boardArray[row+1][col] = "*"
-                        dfsCell(row+1, col);
-                    }
-                }
+            if(state.boardArray[row][col] === -1 && getCellNumber(row, col) !== 0) {
+                state.boardArray[row][col] = getCellNumber(row, col);
+            };
+            if(state.boardArray[row][col] === -1 && getCellNumber(row, col) === 0) {
+                state.boardArray[row][col] = getCellNumber(row, col);
+                dfsCell(row ,col);
             };
 
             function isExistMine(row, col) {
@@ -93,13 +96,43 @@ export const gameBoardSlice = createSlice({
                 return mineCnt;
             };
 
-            if(state.boardArray[row][col] === -1 && getCellNumber(row, col) !== 0) {
-                state.boardArray[row][col] = getCellNumber(row, col);
-            };
-            if(state.boardArray[row][col] === -1 && getCellNumber(row, col) === 0) {
-                state.boardArray[row][col] = getCellNumber(row, col);
-                console.log(state.boardArray[row][col]);
-                dfsCell(row ,col);
+            function dfsCell(row ,col) {  
+                state.visited[row][col] = true;
+                const top = getCellNumber(row-1, col);
+                const bottom = getCellNumber(row+1, col);
+                const left = getCellNumber(row, col-1);
+                const right = getCellNumber(row, col+1)
+                if(top === 0 && state.visited[row-1][col] === false){
+                    state.boardArray[row-1][col] = top;
+                    dfsCell(row-1, col);
+                }else if(top !== 0 && state.visited[row-1][col] === true){
+                    state.boardArray[row-1][col] = top;
+                    dfsCell(row-1, col);
+                }
+
+                if(bottom === 0 && state.visited[row+1][col] === false){
+                    state.boardArray[row+1][col] = bottom;
+                    dfsCell(row+1, col);
+                }else if(bottom !== 0 && state.visited[row+1][col] === false){
+                    state.boardArray[row+1][col] = bottom;
+                    dfsCell(row+1, col);
+                }
+
+                // if(left === 0 && state.visited[row][col-1] === false){
+                //     state.boardArray[row][col-1] = left;
+                //     dfsCell(row, col-1);
+                // }else if(left !== 0) {
+                //     state.boardArray[row][col-1] = left;
+                //     dfsCell(row, col-1);
+                // }
+
+                // if(right === 0 && state.visited[row][col+1] === false){
+                //     state.boardArray[row][col+1] = right;
+                //     dfsCell(row, col+1);
+                // }else if(right !== 0) {
+                //     state.boardArray[row][col+1] = right;
+                //     dfsCell(row, col+1);
+                // }
             };
             // if(state.boardArray[row][col] === "ㅤ") {
             //     state.boardArray[row][col] = getCellNumber(row, col);
@@ -133,5 +166,6 @@ export const {
     setInsertBoard,
     setInsertRow,
     setInsertCol,
+    setVisited,
     setNumbers,
 } = gameBoardSlice.actions;
