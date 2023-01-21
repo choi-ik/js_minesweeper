@@ -14,16 +14,21 @@ export const gameBoardSlice = createSlice({
         setCol: 0,
         isOpen: false,
         visited: [],
+        openCellCount:0 // 오픈 한 셀의 개수
     },
     reducers: {
         // 게임 보드 2차원 배열로 setting
         setPlace: (state, action) => {
             state.boardArray = []; // 배 열 초기화
+            state.openCellCount = 0; // 오픈된 셀 초기화
             if(state.boardArray.length < 9){
                 for(let i=0; i<state.row; i++) {
                     state.boardArray.push([]);
                     for(let j=0; j<state.col; j++) {
-                        state.boardArray[i].push(-1);
+                        state.boardArray[i][j] = {
+                            value: "*",
+                            isOpen: false,
+                        }
                     }
                 }
             }
@@ -34,8 +39,8 @@ export const gameBoardSlice = createSlice({
                 let ROW = Math.floor(Math.random() * state.row);
                 let COL = Math.floor(Math.random() * state.col);
 
-                if(state.boardArray[ROW][COL] === state.mineValue) i++;
-                if(state.boardArray[ROW][COL] === -1) state.boardArray[ROW][COL] = state.mineValue;
+                if(state.boardArray[ROW][COL].value === state.mineValue) i++;
+                if(state.boardArray[ROW][COL].value === "*") state.boardArray[ROW][COL].value = state.mineValue;
             }
         },
         setClickState: (state, action) => {
@@ -43,6 +48,10 @@ export const gameBoardSlice = createSlice({
         },
         setInsertBoard: (state, action) => {
             state.boardArray[state.setRow][state.setCol] = action.payload;
+        },
+        setBoardisOpen: (state, action) => {
+            const {row, col} = action.payload;
+            state.boardArray[row][col].isOpen = true;
         },
         setInsertRow: (state, action) => {
             state.setRow = action.payload;
@@ -65,11 +74,15 @@ export const gameBoardSlice = createSlice({
             console.log(row, col);
             state.visited[row][col] = true;
 
-            if(state.boardArray[row][col] === -1 && getCellNumber(row, col) !== 0) {
-                state.boardArray[row][col] = getCellNumber(row, col);
+            if(state.boardArray[row][col].value === "*" && getCellNumber(row, col) !== 0) {
+                state.boardArray[row][col].value = getCellNumber(row, col);
+                state.boardArray[row][col].isOpen = true;
+                state.openCellCount++;
             };
-            if(state.boardArray[row][col] === -1 && getCellNumber(row, col) === 0) {
-                state.boardArray[row][col] = getCellNumber(row, col);
+            if(state.boardArray[row][col].value === "*" && getCellNumber(row, col) === 0) {
+                state.boardArray[row][col].value = getCellNumber(row, col);
+                state.boardArray[row][col].isOpen = true;
+                state.openCellCount++;
                 dfsCell(row ,col);
             };
 
@@ -78,7 +91,7 @@ export const gameBoardSlice = createSlice({
                 if(row < 0 || row >= state.row || col < 0 || col >= state.col) {
                    return false;
                }
-               return state.boardArray[row][col] === state.mineValue; // true를 반환
+               return state.boardArray[row][col].value === state.mineValue; // true를 반환
            };
 
             function getCellNumber(row, col) {
@@ -97,42 +110,83 @@ export const gameBoardSlice = createSlice({
             };
 
             function dfsCell(row ,col) {  
-                state.visited[row][col] = true;
+                
+                // 주변 지뢰갯수를 변수에 저장
                 const top = getCellNumber(row-1, col);
                 const bottom = getCellNumber(row+1, col);
                 const left = getCellNumber(row, col-1);
-                const right = getCellNumber(row, col+1)
-                if(top === 0 && state.visited[row-1][col] === false){
-                    state.boardArray[row-1][col] = top;
-                    dfsCell(row-1, col);
-                }else if(top !== 0 && state.visited[row-1][col] === true){
-                    state.boardArray[row-1][col] = top;
-                    dfsCell(row-1, col);
+                const right = getCellNumber(row, col+1);
+                
+                console.log("top:",top,"bottom:",bottom,"left:",left,"right:",right);
+                // 위쪽 셀 탐색
+                if(0 <= row-1 && row-1 < 9 && 0 <= col && col < 9){
+                    if(!state.visited[row-1][col]){
+                        if(top === 0){
+                            state.visited[row-1][col] = true;
+                            state.boardArray[row-1][col].value = top;
+                            state.boardArray[row-1][col].isOpen = true;
+                            state.openCellCount++;
+                            dfsCell(row-1, col);
+                        }else{
+                            state.visited[row-1][col] = true;
+                            state.boardArray[row-1][col].value = top;
+                            state.boardArray[row-1][col].isOpen = true;
+                            state.openCellCount++;
+                        }
+                    }
                 }
-
-                if(bottom === 0 && state.visited[row+1][col] === false){
-                    state.boardArray[row+1][col] = bottom;
-                    dfsCell(row+1, col);
-                }else if(bottom !== 0 && state.visited[row+1][col] === false){
-                    state.boardArray[row+1][col] = bottom;
-                    dfsCell(row+1, col);
+                // 아래쪽 셀 탐색
+                if(0 <= row+1 && row+1 < 9 && 0 <= col && col < 9){
+                    if(!state.visited[row+1][col]){
+                        if(bottom === 0){
+                            state.visited[row+1][col] = true;
+                            state.boardArray[row+1][col].value = bottom;
+                            state.boardArray[row+1][col].isOpen = true;
+                            state.openCellCount++;
+                            dfsCell(row+1, col);
+                        }else{
+                            state.visited[row+1][col] = true;
+                            state.boardArray[row+1][col].value = bottom;
+                            state.boardArray[row+1][col].isOpen = true;
+                            state.openCellCount++;
+                        }
+                    }
                 }
-
-                // if(left === 0 && state.visited[row][col-1] === false){
-                //     state.boardArray[row][col-1] = left;
-                //     dfsCell(row, col-1);
-                // }else if(left !== 0) {
-                //     state.boardArray[row][col-1] = left;
-                //     dfsCell(row, col-1);
-                // }
-
-                // if(right === 0 && state.visited[row][col+1] === false){
-                //     state.boardArray[row][col+1] = right;
-                //     dfsCell(row, col+1);
-                // }else if(right !== 0) {
-                //     state.boardArray[row][col+1] = right;
-                //     dfsCell(row, col+1);
-                // }
+                // 왼쪽 셀 탐색
+                if(0 <= row && row < 9 && 0 <= col-1 && col-1 < 9){
+                    if(!state.visited[row][col-1]){
+                        if(left === 0){
+                            state.visited[row][col-1] = true;
+                            state.boardArray[row][col-1].value = left;
+                            state.boardArray[row][col-1].isOpen = true;
+                            state.openCellCount++;
+                            dfsCell(row, col-1);
+                        }else{
+                            state.visited[row][col-1] = true;
+                            state.boardArray[row][col-1].value = left;
+                            state.boardArray[row][col-1].isOpen = true;
+                            state.openCellCount++;
+                        }
+                    }
+                }
+                // 오른쪽 셀 탐색
+                if(0 <= row && row < 9 && 0 <= col+1 && col+1 < 9){
+                    if(!state.visited[row][col+1]){
+                        if(right === 0){
+                            state.visited[row][col+1] = true;
+                            state.boardArray[row][col+1].value = right;
+                            state.boardArray[row][col+1].isOpen = true;
+                            state.openCellCount++;
+                            dfsCell(row, col+1);
+                        }else{
+                            state.visited[row][col+1] = true;
+                            state.boardArray[row][col+1].value = right;
+                            state.boardArray[row][col+1].isOpen = true;
+                            state.openCellCount++;
+                        }
+                        
+                    }
+                }
             };
             // if(state.boardArray[row][col] === "ㅤ") {
             //     state.boardArray[row][col] = getCellNumber(row, col);
@@ -164,6 +218,7 @@ export const {
     setRandomMine,
     setClickState,
     setInsertBoard,
+    setBoardisOpen,
     setInsertRow,
     setInsertCol,
     setVisited,

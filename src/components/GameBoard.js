@@ -36,7 +36,8 @@ function GameBoard({ getboardArray, getMineCnt, btnState, dispatchSetPlace, disp
                                         return(
                                             <Cell row={i}
                                                   col={j}
-                                                  value={getboardArray[i][j]}/>
+                                                  value={getboardArray[i][j].value}
+                                                  isOpen={getboardArray[i][j].isOpen}/>
                                         )
                                     })
                                 }
