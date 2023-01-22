@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/js_minesweeper/static/css/main.fceefc80.css",
+    "main.js": "/js_minesweeper/static/js/main.8d836ae6.js",
+    "index.html": "/js_minesweeper/index.html",
+    "main.fceefc80.css.map": "/js_minesweeper/static/css/main.fceefc80.css.map",
+    "main.8d836ae6.js.map": "/js_minesweeper/static/js/main.8d836ae6.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.fceefc80.css",
+    "static/js/main.8d836ae6.js"
+  ]
+}
