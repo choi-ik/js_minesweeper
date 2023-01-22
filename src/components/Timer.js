@@ -11,7 +11,6 @@ import { setTimer } from "../redux/slices/timerSlice";
 function Timer({ getTimerState , getTimerSet, setTimer }) {
 
     useEffect(() => {
-        if(getTimerState === false) return;
         if(getTimerState === true) {
             let time = setInterval(() => {
                 getTimerSet += 1;
@@ -21,6 +20,8 @@ function Timer({ getTimerState , getTimerSet, setTimer }) {
                 clearInterval(time);
                 setTimer(0);
             }
+        }else{
+            return ;
         }
     }, [getTimerState]);
 
@@ -28,7 +29,8 @@ function Timer({ getTimerState , getTimerSet, setTimer }) {
         <div class="flex">
             <div class="h-auto
                         flex
-                        self-end"> 진행시간 : {getTimerSet} 초 </div>
+                        self-end"> 진행시간 : {getTimerSet} 초 
+            </div>
         </div> 
             
     )

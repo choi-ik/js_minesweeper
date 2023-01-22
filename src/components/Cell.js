@@ -101,6 +101,7 @@ const Cell = ({ row, col, value, isOpen, getMineValue, getBoard, getMineCnt, get
         </button>
     );
 };
+
 function mapStateToProps(state) {
     return{
         getMineValue: state.gameBoardSet.mineValue,
