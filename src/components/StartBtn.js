@@ -57,9 +57,7 @@ function mapDispatchToProps(dispatch, ownProps) {
             dispatch(setBtnState(state))
             dispatch(setTimerState(state))
         },
-        setBtnText: (text) => {
-            dispatch(setBtnText(text));
-        }
+        setBtnText: (text) => dispatch(setBtnText(text))
     }
 }
 

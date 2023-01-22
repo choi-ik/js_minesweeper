@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { setFlagCnt, setMine } from "../redux/slices/mineSlice";
+import { setMine } from "../redux/slices/mineSlice";
+import { setFlagCnt } from "../redux/slices/gameBoardSlice";
 import { connect } from "react-redux";
 import Timer from "./Timer";
-import { isDisabled } from "@testing-library/user-event/dist/utils";
+import Success from "./Success";
 
 /* props 순서대로 
     지뢰 개수, 
@@ -18,6 +19,7 @@ function MineCount({getMineCnt, getFlagCnt, getBtnState, setMine, setFlagCnt}) {
     const [textBoolean, setTextBoolean] = useState(true);
     const inputRef = useRef(null);
 
+    // 시작버튼의 상태에 따라 입력란의 활성화 및 비활성화 함수
     const inputState = () => {
         if(getBtnState === false) {
             return inputRef.current.disabled = false;
@@ -27,10 +29,12 @@ function MineCount({getMineCnt, getFlagCnt, getBtnState, setMine, setFlagCnt}) {
         
     };
     
+    //
     const onChange = (e) => {
         setText(e.target.value);
-        const textValue = Number(e.target.value);
-        setTextBoolean(Number.isNaN(textValue));
+        const textValue = Number(e.target.value); // 숫자가 입력되면 숫자그대로, 아니면 NaN 
+        console.log(textValue);
+        setTextBoolean(Number.isNaN(textValue)); // true이면 NaN false이면 숫자
     };
 
     const onSubmit = (e) => {
@@ -51,7 +55,7 @@ function MineCount({getMineCnt, getFlagCnt, getBtnState, setMine, setFlagCnt}) {
     useEffect(() => {
         if(getBtnState === false) setFlagCnt(getMineCnt);
         inputState();
-    },[getBtnState, textBoolean])
+    },[getBtnState, textBoolean]);
 
     return (
         <span class="flex
@@ -59,7 +63,7 @@ function MineCount({getMineCnt, getFlagCnt, getBtnState, setMine, setFlagCnt}) {
                     justify-center
                     mb-2">
             <form onSubmit={onSubmit}
-                    class="mr-[12%]"> 
+                    class=""> 
                 {/* <input type="text" value={text} placeholder="지뢰 갯수 입력" onChange={onChange}/> */}
                 <input type="text"
                         value={text}
@@ -80,6 +84,7 @@ function MineCount({getMineCnt, getFlagCnt, getBtnState, setMine, setFlagCnt}) {
                         name="email"/>
                 <span class="text-center"> : {getFlagCnt}</span>
             </form>
+            <Success />
             <Timer />
             
         </span>
@@ -89,7 +94,7 @@ function MineCount({getMineCnt, getFlagCnt, getBtnState, setMine, setFlagCnt}) {
 function mapStateToProps(state, ownProps) {
     return {
         getMineCnt: state.mineSet.mine,
-        getFlagCnt: state.mineSet.flagCnt,
+        getFlagCnt: state.gameBoardSet.flagCnt,
         getBtnState: state.startBtnSet.btnState,
     }
 }

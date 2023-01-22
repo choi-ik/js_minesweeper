@@ -39,7 +39,7 @@ function Timer({ getTimerState , getTimerSet, setTimer }) {
 function mapStateToProps(state, ownProps) {
     return {
         getTimerState: state.timerSet.state,
-        getTimerSet: state.timerSet.timer
+        getTimerSet: state.timerSet.timer,
     }
 }
 // startBtnSlice에 reducer에 dispatch.

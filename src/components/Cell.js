@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { setNumbers, setClickState, setInsertRow, setInsertCol, setInsertBoard, setBoardisOpen } from "../redux/slices/gameBoardSlice";
-import { setMinusMine, setPlusMine } from "../redux/slices/mineSlice";
+import { setNumbers, setClickState, setBoardisOpen, setBoardisFlag, setMinusMine, setPlusMine } from "../redux/slices/gameBoardSlice";
 import { setBtnText } from "../redux/slices/startBtnSlice";
 import { setTimerState } from "../redux/slices/timerSlice";
 import { getCellTextColor } from "../utils/cellTextColor";
@@ -14,6 +13,7 @@ import { getCellTextColor } from "../utils/cellTextColor";
     게임보드 배열, 
     지뢰 개수, 
     깃발,
+    남은 깃발 개수,
     버튼의 boolean 상태,
     셀 클릭의 boolean 상태,
     열린 셀의 개수,
@@ -26,12 +26,12 @@ import { getCellTextColor } from "../utils/cellTextColor";
     셀 클릭시 주변 지뢰개수 + DFS 알고리즘으로 주변 셀 열람 dispatch
  */
 
-const Cell = ({ row, col, value, isOpen, getMineValue, getBoard, getMineCnt, getFlag, getBtnState, getClickState, getOepnCount,
-    setBtnText, setTimerState, setClickState, setPlusMine, setMinusMine, setNumbers, setBoardisOpen }) => {
+const Cell = ({ row, col, value, isOpen, getMineValue, getBoard, getMineCnt, getFlag, getFlagCnt, getBtnState, getClickState, getOepnCount,
+    setBtnText, setTimerState, setClickState, setPlusMine, setMinusMine, setNumbers, setBoardisOpen, setBoardisFlag }) => {
 
     const [rightClick, setRightClick] = useState(false); // 우클릭 시 좌클릭을 막기 위한 state
     const [lClickState, setLClickState] = useState(); // 좌클릭 시 우클릭을 막기 위한 state
-    const [isFlag, setIsFlag] = useState(false); // 깃발을 보여주기 위한 state
+    //const [isFlag, setIsFlag] = useState(false); // 깃발을 보여주기 위한 state
     const [bgColor, setBgColor] = useState(); // 백그라운드 컬러의 상태
     
     const ROW = row; // 행을 받아온 변수
@@ -44,7 +44,7 @@ const Cell = ({ row, col, value, isOpen, getMineValue, getBoard, getMineCnt, get
         setRightClick(false);
         setBgColor(true);
         setLClickState(false);
-        setIsFlag(false);
+        //setIsFlag(false);
     }, [getMineCnt, getBtnState]);
 
     // 셀 좌클릭했을때 이벤트
@@ -53,7 +53,7 @@ const Cell = ({ row, col, value, isOpen, getMineValue, getBoard, getMineCnt, get
             if(getBoard[ROW][COL].value !== getMineValue){
                 setLClickState(true);
                 setNumbers(ROW, COL);
-            }
+            };
             // 클릭한 셀이 지뢰일때
             if(getBoard[ROW][COL].value === getMineValue) {
                 setBoardisOpen(ROW, COL);
@@ -65,6 +65,7 @@ const Cell = ({ row, col, value, isOpen, getMineValue, getBoard, getMineCnt, get
             // 게임이 완료되면 클릭 비활성화
         }else if(getOepnCount === 81 - getMineCnt) {
             setClickState(false);
+            //setIsFlag(false);
         }
          else {
             return false;
@@ -74,30 +75,40 @@ const Cell = ({ row, col, value, isOpen, getMineValue, getBoard, getMineCnt, get
     // 셀 우클릭했을때 깃발 이벤트(토글)
     const onContextMenu = (e) => {
         e.preventDefault();
-        if(getBtnState === true && getClickState === true) {
-            if(rightClick === true) {
-                setRightClick(false);
-                setPlusMine();
-                setIsFlag(false);
-            } else {
-                setIsFlag(true);
-                setRightClick(true);
-                setMinusMine();
+        if(getBtnState === true && getClickState === true && getBoard[ROW][COL].isOpen === false) {
+            if(getFlagCnt > 0){
+                if(rightClick === true) {
+                    setRightClick(false);
+                    setPlusMine();
+                    setBoardisFlag(ROW, COL, false);
+                    //setIsFlag(false);
+                } else {
+                    setRightClick(true);
+                    setMinusMine();
+                    setBoardisFlag(ROW, COL, true);
+                    //setIsFlag(true);
+                }
+            }else if (getFlagCnt === 0){
+                if(rightClick === true){
+                    setRightClick(false);
+                    setPlusMine();
+                    setBoardisFlag(ROW, COL, false);
+                    //setIsFlag(false);
+                }
             }
         }
     };
  
     return (
         <button type="button" 
-                onClick={isFlag ? false : (e) => onClick(e)}
+                onClick={getBoard[ROW][COL].isFlag ? false : (e) => onClick(e)}
                 onContextMenu={lClickState ? (e) => {e.preventDefault()} : (e) => onContextMenu(e)}
                 class={`py-1 px-1
                         h-[50px] w-[50px]
                         ${bgColor === true ? getBoard[ROW][COL].value === 0 ? "bg-indigo-300" : "bg-indigo-500 hover:bg-indigo-600" : "bg-gray-800"}
                         ${getCellTextColor(getBoard[ROW][COL].value)}
                         border`}>
-         {isOpen ? getBoard[ROW][COL].value === 0 ? "ㅤ" : getBoard[ROW][COL].value : isFlag ? getFlag : "ㅤ"}
-         {getOepnCount === 81 - getMineCnt ? getBoard[ROW][COL].value === getMineValue ? getMineValue : false : false}
+         {isOpen ? getBoard[ROW][COL].value === 0 ? "ㅤ" : getBoard[ROW][COL].value : getBoard[ROW][COL].isFlag ? getOepnCount === 81 - getMineCnt ? getMineValue : getFlag : getOepnCount === 81 - getMineCnt ? getMineValue : "ㅤ"}
         </button>
     );
 };
@@ -111,6 +122,7 @@ function mapStateToProps(state) {
         getBtnState: state.startBtnSet.btnState,
         getClickState: state.gameBoardSet.clickState,
         getOepnCount: state.gameBoardSet.openCellCount,
+        getFlagCnt: state.gameBoardSet.flagCnt,
     }
 }
 function mapDispatchToProps(dispatch, ownProps) {
@@ -122,6 +134,7 @@ function mapDispatchToProps(dispatch, ownProps) {
         setMinusMine: () => dispatch(setMinusMine()),
         setNumbers: (row, col) => dispatch(setNumbers({row, col})),
         setBoardisOpen: (row, col) => dispatch(setBoardisOpen({row, col})),
+        setBoardisFlag: (row, col, value) => dispatch(setBoardisFlag({row, col, value})),
     }
 }
 

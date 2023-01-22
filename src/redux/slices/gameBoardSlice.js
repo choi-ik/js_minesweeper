@@ -8,7 +8,7 @@ export const gameBoardSlice = createSlice({
         mineValue: "💣", // 블록에 들어간 마인의 value
         boardArray: [], // 보드 배열의 초기화
         flag: "🚩", // 깃발 값
-        notFlag: "ㅤ", //깃발이 없을때 상태
+        flagCnt: 10, // 초기 깃발 개수
         clickState: false, //Cell.js의 클릭 상태
         visited: [], //DFS에서 사용할 방문한 셀 배열
         openCellCount:0 // 오픈 한 셀의 개수
@@ -25,6 +25,7 @@ export const gameBoardSlice = createSlice({
                         state.boardArray[i][j] = {
                             value: "*", // 보드의 값
                             isOpen: false, // 보드를 Open 여부
+                            isFlag: false, // 깃발 Open 여부
                         }
                     }
                 }
@@ -48,6 +49,23 @@ export const gameBoardSlice = createSlice({
         setBoardisOpen: (state, action) => {
             const {row, col} = action.payload;
             state.boardArray[row][col].isOpen = true;
+        },
+        // 보드의 깃발 Open 여부 변경
+        setBoardisFlag: (state, action) => {
+            const {row, col, value} = action.payload;
+            state.boardArray[row][col].isFlag = value;
+        },
+        // 깃발의 개수
+        setFlagCnt: (state, action) => {
+            state.flagCnt = action.payload;
+        },
+        // 깃발 개수 증가
+        setPlusMine: (state, action) => {
+            state.flagCnt++;
+        },
+        // 깃발 개수 감소
+        setMinusMine: (state, action) => {
+            state.flagCnt--;
         },
         // DFS 알고리즘의 방문 여부를 위한 배열 생성
         setVisited: (state, action) => {
@@ -114,12 +132,15 @@ export const gameBoardSlice = createSlice({
                             state.visited[row-1][col] = true;
                             state.boardArray[row-1][col].value = top;
                             state.boardArray[row-1][col].isOpen = true;
+                            //열람하려는 셀에 깃발이 꽂혀있다면 깃발이 제거되고 셀이 다른 값으로 열리면서 감소되었던 깃발개수 증가
+                            if(state.boardArray[row-1][col].isFlag === true) state.flagCnt++  
                             state.openCellCount++;
                             dfsCell(row-1, col);
                         }else{
                             state.visited[row-1][col] = true;
                             state.boardArray[row-1][col].value = top;
                             state.boardArray[row-1][col].isOpen = true;
+                            if(state.boardArray[row-1][col].isFlag === true) state.flagCnt++
                             state.openCellCount++;
                         }
                     }
@@ -131,12 +152,14 @@ export const gameBoardSlice = createSlice({
                             state.visited[row+1][col] = true;
                             state.boardArray[row+1][col].value = bottom;
                             state.boardArray[row+1][col].isOpen = true;
+                            if(state.boardArray[row+1][col].isFlag === true) state.flagCnt++
                             state.openCellCount++;
                             dfsCell(row+1, col);
                         }else{
                             state.visited[row+1][col] = true;
                             state.boardArray[row+1][col].value = bottom;
                             state.boardArray[row+1][col].isOpen = true;
+                            if(state.boardArray[row+1][col].isFlag === true) state.flagCnt++
                             state.openCellCount++;
                         }
                     }
@@ -148,12 +171,14 @@ export const gameBoardSlice = createSlice({
                             state.visited[row][col-1] = true;
                             state.boardArray[row][col-1].value = left;
                             state.boardArray[row][col-1].isOpen = true;
+                            if(state.boardArray[row][col-1].isFlag === true) state.flagCnt++
                             state.openCellCount++;
                             dfsCell(row, col-1);
                         }else{
                             state.visited[row][col-1] = true;
                             state.boardArray[row][col-1].value = left;
                             state.boardArray[row][col-1].isOpen = true;
+                            if(state.boardArray[row][col-1].isFlag === true) state.flagCnt++
                             state.openCellCount++;
                         }
                     }
@@ -165,12 +190,14 @@ export const gameBoardSlice = createSlice({
                             state.visited[row][col+1] = true;
                             state.boardArray[row][col+1].value = right;
                             state.boardArray[row][col+1].isOpen = true;
+                            if(state.boardArray[row][col+1].isFlag === true) state.flagCnt++
                             state.openCellCount++;
                             dfsCell(row, col+1);
                         }else{
                             state.visited[row][col+1] = true;
                             state.boardArray[row][col+1].value = right;
                             state.boardArray[row][col+1].isOpen = true;
+                            if(state.boardArray[row][col+1].isFlag === true) state.flagCnt++
                             state.openCellCount++;
                         }
                     }
@@ -185,6 +212,10 @@ export const {
     setRandomMine,
     setClickState,
     setBoardisOpen,
+    setBoardisFlag,
+    setFlagCnt,
+    setPlusMine,
+    setMinusMine,
     setVisited,
     setNumbers,
 } = gameBoardSlice.actions;

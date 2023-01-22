@@ -1,15 +1,25 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
+import { setTimerState } from "../redux/slices/timerSlice";
+import { setBtnText } from "../redux/slices/startBtnSlice";
 
-function Success({ getOepnCount, getMineCnt }) {
+function Success({ getOepnCount, getMineCnt, setTimerState, setBtnText }) {
 
     useEffect(() => {
-        console.log(getOepnCount, " 오픈된 셀 개수")
-    }, [getOepnCount])
+        if(getOepnCount === 81 - getMineCnt) {
+            setTimerState(false);
+            setBtnText("축하합니다 성공입니다.");
+        } 
+    }, [getOepnCount]);
+
     return(
-        <div>
-            {getOepnCount === 81 - getMineCnt ? "👍" : false}
-        </div>
+        <span class="flex
+                    self-end
+                    scale-150
+                    mr-[7.5%]
+                    ml-[4%]">
+            {getOepnCount === 81 - getMineCnt ? "😁" : "😐"}
+        </span>
     );
 }
 
@@ -21,8 +31,11 @@ function mapStateToProps(state, props) {
 };
 
 function mapDispatchToProps(dispatch, props) {
-
+    return {
+        setTimerState: (state) => dispatch(setTimerState(state)),
+        setBtnText: (text) => dispatch(setBtnText(text))
+    }
 };
 
 
-export default connect(mapStateToProps) (Success);
+export default connect(mapStateToProps, mapDispatchToProps) (Success);

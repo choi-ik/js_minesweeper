@@ -6,7 +6,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Main />}></Route>
+        <Route path={`${process.env.PUBLIC_URL}/`} element={<Main />}></Route>
         {/* <Route path="/:id" element={<Detail />}></Route> */}
       </Routes>
     </Router> 
