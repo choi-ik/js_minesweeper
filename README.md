@@ -127,6 +127,7 @@
 <br>
 <br>
 # ✅ Redux 상태 관리
+
 - **gameBoardSlice**
 
     - 게임 보드의 행,열의 길이
@@ -210,7 +211,7 @@
 
 # ✅ 실행화면
 <p align="center">
-    <img width="550px" src="https://user-images.githubusercontent.com/91654577/214492006-8a4c8b6f-a28d-4ddf-b70f-4c7d49d5eda4.png"/>
+    <img width="700px" src="https://user-images.githubusercontent.com/91654577/214492006-8a4c8b6f-a28d-4ddf-b70f-4c7d49d5eda4.png"/>
     <img width="550px" src="https://user-images.githubusercontent.com/91654577/214492014-16daf122-0008-49c3-9b2f-ab0671a1ac1c.png" />
 </p>
 
