@@ -8,17 +8,12 @@
 5. 마우스 **좌클릭 한번**으로 한 칸 열기, **우클릭 한번**은 깃발 꽂기.
 
    **[여기](https://choi-ik.github.io/js_minesweeper/) 를 클릭하여 게임 실행**
-<br>
-<br>
 
 # 📌 사용 기술
 - **JavaScript**
 - **React.js**
 - **Redux-Toolkit**
 - **TailwindCSS**
-<br>
-<br>
-
 # 📂 파일 구조
 
 **|— src** 
@@ -58,7 +53,6 @@
 **|—|— Utils**
 
     |— cellTextColor.js
-<br>
 
 # ✅ 목표 기능
 - **9 X 9  2차원 배열 게임보드 구현**
@@ -100,8 +94,6 @@
 - **지뢰 개수 입력 구현**
 
     - 보드 상단에 지뢰 개수(Limit = 30) 입력, 지뢰 개수에 맞게 게임 보드에 랜덤으로 지뢰 뿌리기
-<br>
-<br>
 
 # 📌 필수 기능 구현
 ### 지뢰찾기 보드 구현
@@ -124,8 +116,7 @@
 - 빈 블록을 클릭했을 때 주변 모든 지뢰가 없는 블록을 연쇄적으로 열람하기 위해 DFS 알고리즘(재귀 호출)을 사용해 주변 블록 탐색
 
     - 주변에 지뢰가 없는 (블록의 숫자가 0인) 블록들을 모두 Open 해버린다.
-<br>
-<br>
+
 # ✅ Redux 상태 관리
 
 - **gameBoardSlice**
@@ -199,15 +190,10 @@
 
         - 타이머 값 변경
 
-<br>
-<br>
-
 # ✅ 프로젝트 목업
 <p align="center">
     <img width="600px" height="600px" src="https://user-images.githubusercontent.com/91654577/214491413-ccd31483-a22b-42e1-aa4d-488e93790893.png"/>
 </p>
-<br>
-<br>
 
 # ✅ 실행화면
 <p align="center">
