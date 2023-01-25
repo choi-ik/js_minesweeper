@@ -105,6 +105,7 @@ const Cell = ({ row, col, value, isOpen, getMineValue, getBoard, getMineCnt, get
                 onContextMenu={lClickState ? (e) => {e.preventDefault()} : (e) => onContextMenu(e)}
                 class={`py-1 px-1
                         h-[50px] w-[50px]
+                        font-bold
                         ${bgColor === true ? getBoard[ROW][COL].value === 0 ? "bg-indigo-300" : "bg-indigo-500 hover:bg-indigo-600" : "bg-gray-800"}
                         ${getCellTextColor(getBoard[ROW][COL].value)}
                         border`}>

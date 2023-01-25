@@ -1,15 +1,15 @@
 export const getCellTextColor = (mineCount) => {
     switch(mineCount) {
         case 1:
-            return "text-black";
+            return "text-white";
         case 2:
             return "text-yellow-300";
         case 3: 
-            return "text-blue-700";
+            return "text-green-400";
         case 4:
             return "text-red-500";
         case 5:
-            return "text-indigo-700";
+            return "text-blue-300";
         case 6:
             return "text-purple-600";
         case 7:
