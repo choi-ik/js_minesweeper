@@ -95,7 +95,7 @@ export const gameBoardSlice = createSlice({
             };
             // 매개변수로 넘어온 셀에 지뢰가 있다면 true 리턴
             function isExistMine(row, col) {
-                // ArrayIndexOutOfBoundsException 예방
+                
                 if(row < 0 || row >= state.row || col < 0 || col >= state.col) {
                    return false;
                }
